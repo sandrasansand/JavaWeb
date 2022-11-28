@@ -1,27 +1,51 @@
-package com.arquitecturajava.ejemplo1;
-import com.arquitecturajava.dominio.*;
+package com.arquitecturajava.ejemplo7;
+
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+
+import com.arquitecturajava.dominio.Persona;
 
 public class Principal {
 
 	public static void main(String[] args) {
+
+		ArrayList<Persona> listaPersonas = new ArrayList<Persona>();
+
+		listaPersonas.add(new Persona("pedro", "gomez", 30));
+		listaPersonas.add(new Persona("ana", "sanchez", 40));
+		listaPersonas.add(new Persona("gema", "blanco", 20));
+		listaPersonas.add(new Persona("antonio", "perez", 70));
+
+		
+		//un metodo de referencia que es como una expresion lambda pero en una clase
+		Predicate<Persona> filtroPedro= new FiltroPersonaNombre("pedro");
+		Predicate<Persona> filtroJubilado=Persona::estaJubilado;
 		
 		
-		ArrayList<Persona> listaPersonas= new ArrayList<Persona>();
+		List<Persona> nueva= buscarPersonaConFiltro(FiltroPersona.orMultiple(filtroPedro,filtroJubilado),listaPersonas);
 		
-		listaPersonas.add(new Persona("pedro","gomez",30));
-		listaPersonas.add(new Persona("ana","sanchez",40));
-		listaPersonas.add(new Persona("gema","blanco",20));
-		
-		//hemos implementado el método CompareTo 
-		//del interface Comparable solo permite ordenar por un campo
-		Collections.sort(listaPersonas);
-		
-		for (Persona p: listaPersonas) {
-			
-			System.out.printf("persona : %s %s %s %n",p.getNombre(),p.getApellidos(),p.getEdad());
+		for (Persona p : nueva) {
+
+			System.out.printf("persona : %s %s %s %n", p.getNombre(), p.getApellidos(), p.getEdad());
 		}
+
 	}
+	//necesito una funcion de filtrado
+	public static List<Persona> buscarPersonaConFiltro(Predicate<Persona> filtro, List<Persona> milista) {
+
+		List<Persona> listaFiltro = new ArrayList<Persona>();
+
+		for (Persona p : milista) {
+
+			if (filtro.test(p)) {
+				listaFiltro.add(p);
+			}
+
+		}
+		return listaFiltro;
+	}
+
+	
 
 }
